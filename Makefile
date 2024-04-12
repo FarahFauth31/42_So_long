@@ -22,7 +22,7 @@ GLFW = -Iinclude -lglfw
 LIB_SYS = -L "/Users/ffauth-p/.brew/opt/glfw/lib/"
 
 # Files
-SRCS = main.c map.c errors.c aid.c
+SRCS = main.c map.c errors.c aid.c display.c play.c cleanup.c
 OBJS = $(SRCS:.c=.o)
 
 # Executable name
@@ -35,12 +35,13 @@ all : $(NAME)
 $(NAME): $(OBJS) $(LIBS)
 	@echo "$(MAGENTA)$(BOLD)Compiling so_long...$(RESET)"
 	@$(CC) $(CFLAGS) $(INCLUDES) $(GLFW) $(LIB_SYS) -o $@ $(OBJS) $(LIBS)
-	@echo "$(CYAN)$(BOLD)Done$(RESET)"
+	@echo "$(CYAN)$(BOLD)Done.$(RESET)"
 
 $(LIBS):
 	@make -C $(LIB_DIR)
+	@make -C $(MLX_DIR)
 
-%.o: %.c minishell.h
+%.o: %.c so_long.h
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
@@ -48,10 +49,12 @@ clean:
 	@rm -f $(OBJS)
 	@echo "$(CYAN)$(BOLD)Done.$(RESET)"
 	@make -C $(LIB_DIR) clean
+	@make -C $(MLX_DIR) clean
 
 fclean: clean
 	@rm -f $(NAME)
 	@make -C $(LIB_DIR) fclean
+	@make -C $(MLX_DIR) fclean
 
 re : fclean all
 
